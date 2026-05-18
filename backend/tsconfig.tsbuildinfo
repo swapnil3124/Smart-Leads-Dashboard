@@ -1,0 +1,1 @@
+{"root":["./src/app.ts","./src/index.ts","./src/config/database.ts","./src/controllers/authcontroller.ts","./src/controllers/leadcontroller.ts","./src/middleware/authmiddleware.ts","./src/middleware/errormiddleware.ts","./src/models/lead.ts","./src/models/user.ts","./src/routes/authroutes.ts","./src/routes/leadroutes.ts"],"version":"6.0.3"}

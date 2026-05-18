@@ -17,10 +17,10 @@ export const getLeads = asyncHandler(async (req: Request, res: Response) => {
 
   // Filtering
   if (status) {
-    query.status = status;
+    query.status = status as LeadStatus;
   }
   if (source) {
-    query.source = source;
+    query.source = source as LeadSource;
   }
 
   // Search
@@ -68,8 +68,8 @@ export const createLead = asyncHandler(async (req: Request, res: Response) => {
   const lead = await Lead.create({
     name,
     email,
-    status,
-    source,
+    status: status as LeadStatus,
+    source: source as LeadSource,
   });
 
   res.status(201).json(lead);
@@ -95,13 +95,13 @@ export const updateLead = asyncHandler(async (req: Request, res: Response) => {
   if (lead) {
     if ((req as any).user.role === 'Sales User') {
       // Sales User can ONLY update status
-      lead.status = status || lead.status;
+      lead.status = (status as LeadStatus) || lead.status;
     } else {
       // Admin can update everything
       lead.name = name || lead.name;
       lead.email = email || lead.email;
-      lead.status = status || lead.status;
-      lead.source = source || lead.source;
+      lead.status = (status as LeadStatus) || lead.status;
+      lead.source = (source as LeadSource) || lead.source;
     }
 
     const updatedLead = await lead.save();
@@ -141,14 +141,13 @@ export const exportLeads = asyncHandler(async (req: Request, res: Response) => {
   const leads = await Lead.find(query).sort({ createdAt: -1 });
 
   // Generate CSV
-  const headers = ['ID', 'Name', 'Email', 'Status', 'Source', 'Created At'];
+  const headers = ['Name', 'Email', 'Status', 'Source', 'Created At'];
   const rows = leads.map((lead) => [
-    lead._id,
     lead.name,
     lead.email,
     lead.status,
     lead.source,
-    lead.createdAt.toISOString(),
+    lead.createdAt.toISOString().replace('T', ' ').substring(0, 16),
   ]);
 
   const csvContent = [
